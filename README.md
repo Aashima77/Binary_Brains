@@ -24,7 +24,10 @@ VisionAI is an AI-powered surveillance system built to enhance workplace safety 
 - **Zone-Based Safety Enforcement**  
   Detects and logs restricted area violations.
 
-##*: FastAPI, SQLite (with future PostgreSQL upgrade)  
+## ⚙️ Tech Stack
+
+- **Computer Vision**: YOLOv8, OpenCV  
+- **Backend**: FastAPI, SQLite (with future PostgreSQL upgrade)  
 - **Frontend**: React.js, Tailwind CSS  
 - **Alert System**: pyttsx3 for TTS, optional buzzer integration  
 - **Storage**: Local + Google Drive (for cropped violations)
@@ -36,5 +39,3 @@ Traditional CCTV systems are passive and rely heavily on manual review. VisionAI
 ---
 
 Stay tuned for updates as we continue to build a deployable, scalable, and intelligent safety compliance system.
-
-
