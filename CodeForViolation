@@ -22,7 +22,7 @@ TO_WHATSAPP_NUMBER = 'whatsapp:+917976229497'
 
 # Gmail config
 FROM_EMAIL = "khushalnagal512@gmail.com"
-APP_PASSWORD = "vnjqbfjfyxcozdje"
+APP_PASSWORD = "your password"
 TO_EMAIL = "khushalnagal512@gmail.com"  # Can be same or different
 
 # Init folders & TTS
