@@ -3,6 +3,8 @@
 
 **VisionAI** is a comprehensive AI-powered system designed to monitor industrial environments for safety and compliance. It leverages real-time video feeds, object detection, and a robust web interface to provide actionable alerts and insights.
 
+![Landing](./public/Images/README/home.png)
+
 ---
 
 ## 🔍 Features
@@ -13,6 +15,14 @@
 - **Dashboard & Reporting**: Visualizes factory, location, and camera statuses; includes historical violation review.
 - **User Management**: Secure login with role-based access control.
 - **Configurable Setup**: Easily manage factories, locations, cameras, and worker data.
+
+![Feed](./public/Images/README/feed.png)
+
+![Violation](./public/Images/README/violation.png)
+
+![Detail](./public/Images/README/violation_detail.png)
+
+![Config](./public/Images/README/config.png)
 
 ---
 
@@ -127,6 +137,8 @@ The app will be available at: [http://localhost:3000](http://localhost:3000)
 ## 📡 API Endpoints
 
 ### API Routes Documentation
+
+➡️ **Go to [`/docs`] for detailed info**
 
 **1. `/api/alerts`**
 *   **GET /api/alerts**
