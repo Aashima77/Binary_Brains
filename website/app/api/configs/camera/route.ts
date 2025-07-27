@@ -16,6 +16,66 @@ const cameraSchema = z.object({
     .positive("Location ID must be a positive integer"),
 });
 
+/**
+ * @swagger
+ * /api/configs/camera:
+ *   post:
+ *     summary: Add a new camera
+ *     tags:
+ *       - Configurations
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - locationId
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the camera
+ *                 minLength: 1
+ *               streamUrl:
+ *                 type: string
+ *                 format: url
+ *                 description: URL of the camera stream (optional)
+ *               locationId:
+ *                 type: number
+ *                 format: integer
+ *                 description: ID of the location where the camera is installed
+ *                 minimum: 1
+ *     responses:
+ *       201:
+ *         description: Camera added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 name:
+ *                   type: string
+ *                 stream_url:
+ *                   type: string
+ *                 location_id:
+ *                   type: number
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Location not found or does not belong to user
+ *       500:
+ *         description: Internal server error
+ */
 export async function POST(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
 

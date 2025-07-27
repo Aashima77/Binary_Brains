@@ -14,6 +14,72 @@ const workerSchema = z.object({
   factoryId: z.number().int().positive("Factory ID must be a positive integer"),
 });
 
+/**
+ * @swagger
+ * /api/configs/worker:
+ *   post:
+ *     summary: Add a new worker
+ *     tags:
+ *       - Configurations
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - employeeId
+ *               - factoryId
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the worker
+ *                 minLength: 1
+ *               employeeId:
+ *                 type: string
+ *                 description: Employee ID of the worker
+ *                 minLength: 1
+ *               department:
+ *                 type: string
+ *                 description: Department of the worker (optional)
+ *               factoryId:
+ *                 type: number
+ *                 format: integer
+ *                 description: ID of the factory this worker belongs to
+ *                 minimum: 1
+ *     responses:
+ *       201:
+ *         description: Worker added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 name:
+ *                   type: string
+ *                 employee_id:
+ *                   type: string
+ *                 department:
+ *                   type: string
+ *                 factory_id:
+ *                   type: number
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Factory not found or does not belong to user
+ *       500:
+ *         description: Internal server error
+ */
 export async function POST(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
 

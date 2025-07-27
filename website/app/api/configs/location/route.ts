@@ -11,6 +11,60 @@ const locationSchema = z.object({
   factoryId: z.number().int().positive("Factory ID must be a positive integer"),
 });
 
+/**
+ * @swagger
+ * /api/configs/location:
+ *   post:
+ *     summary: Add a new location
+ *     tags:
+ *       - Configurations
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - factoryId
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the location
+ *                 minLength: 1
+ *               factoryId:
+ *                 type: number
+ *                 format: integer
+ *                 description: ID of the factory this location belongs to
+ *                 minimum: 1
+ *     responses:
+ *       201:
+ *         description: Location added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 name:
+ *                   type: string
+ *                 factory_id:
+ *                   type: number
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Factory not found or does not belong to user
+ *       500:
+ *         description: Internal server error
+ */
 export async function POST(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
 
@@ -62,6 +116,42 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * @swagger
+ * /api/configs/location:
+ *   get:
+ *     summary: Get all locations for the authenticated user's factories
+ *     tags:
+ *       - Configurations
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of locations.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: number
+ *                     description: The location ID.
+ *                   location:
+ *                     type: string
+ *                     description: The name of the location.
+ *                   factory_id:
+ *                     type: number
+ *                     description: The ID of the factory this location belongs to.
+ *                   factory:
+ *                     type: string
+ *                     description: The name of the factory this location belongs to.
+ *       401:
+ *         description: Unauthorized if access token is missing or invalid.
+ *       500:
+ *         description: Internal server error.
+ */
 export async function GET(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
 

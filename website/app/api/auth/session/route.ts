@@ -11,6 +11,57 @@ const schema = z.object({
   password: z.string().min(6),
 });
 
+/**
+ * @swagger
+ * /api/auth/session:
+ *   post:
+ *     summary: Log in a user and initiate a session via secure HTTP-only cookies.
+ *     description: |
+ *       Authenticates the user using email and password.
+ *       On success, returns access and refresh tokens as HTTP-only cookies.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: mysecret123
+ *     responses:
+ *       200:
+ *         description: Login successful. Access and refresh tokens are set as HTTP-only cookies.
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: accessToken=...; refreshToken=...
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *       400:
+ *         description: Validation error (e.g., malformed email or short password).
+ *       401:
+ *         description: Invalid credentials.
+ *       500:
+ *         description: Internal server error.
+ */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -78,6 +129,31 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * @swagger
+ * /api/auth/session:
+ *   delete:
+ *     summary: Log out the user and clear session cookies.
+ *     description: Clears the `accessToken` and `refreshToken` cookies, ending the session.
+ *     tags:
+ *       - Authentication
+ *     responses:
+ *       200:
+ *         description: Logout successful.
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: accessToken=; refreshToken=;
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logout successful
+ */
 export async function DELETE() {
   const serialized = [
     serialize("accessToken", "", {
