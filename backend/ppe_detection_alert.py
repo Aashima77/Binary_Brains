@@ -4,26 +4,20 @@ from datetime import datetime
 import pyttsx3
 import playsound
 import json
-from twilio.rest import Client
 import smtplib
 from email.mime.text import MIMEText
+import requests
 
 # === Configuration ===
 CONFIDENCE_THRESHOLD = 0.6
-ALERT_SOUND_PATH = r"D:\BinaryBrains\alarm2.mp3"   # ✅ Ensure path & file exist
+ALERT_SOUND_PATH = r"D:\BinaryBrains\alarm2.mp3"
 SAVE_DIR = "violations"
 VIOLATION_LABELS = ["no_helmet", "no_vest", "no_mask", "no_gloves", "no_goggles"]
 
-# Twilio WhatsApp config
-TWILIO_SID = 'AC3018454b3beecb7ca89df267c58125c6'
-TWILIO_AUTH_TOKEN = '018920adf4028898a5cb2f50a0d912b6'
-TWILIO_SANDBOX_NUMBER = 'whatsapp:+14155238886'
-TO_WHATSAPP_NUMBER = 'whatsapp:+917976229497'
-
-# Gmail config
-FROM_EMAIL = "khushalnagal512@gmail.com"
-APP_PASSWORD = "your password"
-TO_EMAIL = "khushalnagal512@gmail.com"  # Can be same or different
+# Meta WhatsApp API
+ACCESS_TOKEN = 'EAAPSWuqLOZCEBPEfZA2zRnAojsGTRSbuLLsZC3bZAD3jGj7kQJZBN8247wzIOnZAjHX3fNcWcHGs04UWZCULHvTadUT1Gl5u7RfHKqyl361PsT9s1wepnR9YVaoG5EPR3O9N3ZAQUBBZCB1cCAZBeli7Y30vZAzIXO63HMjUxTPtZAWM91NmKgku7PtGyZB9ftN2ZCL6UXDMnW1ov8sd9kWvZBWeahiphVoLZAxAC1qJBUZAZARRzZBcsY7iQ8ZD'
+PHONE_NUMBER_ID = '742762512246701'
+TO_NUMBER = '917976229497'  # ✅ No '+'
 
 # Init folders & TTS
 os.makedirs(SAVE_DIR, exist_ok=True)
@@ -42,20 +36,31 @@ def speak_alert(text):
     tts_engine.runAndWait()
 
 def send_whatsapp_alert(message):
+    url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": TO_NUMBER,
+        "type": "text",
+        "text": {
+            "body": message
+        }
+    }
     try:
-        client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
-        msg = client.messages.create(
-            body=message,
-            from_=TWILIO_SANDBOX_NUMBER,
-            to=TO_WHATSAPP_NUMBER
-        )
-        print(f"[WHATSAPP] Sent. SID: {msg.sid}")
+        response = requests.post(url, headers=headers, json=payload)
+        if response.status_code == 200:
+            print("[WHATSAPP] Message sent successfully ✅")
+        else:
+            print(f"[WHATSAPP] Failed with status {response.status_code}: {response.text}")
     except Exception as e:
-        print(f"[WHATSAPP] Error: {e}")
+        print(f"[WHATSAPP] Error sending message: {e}")
 
 def send_email_alert(subject, body, to_email="khushalnagal@gmail.com"):
     from_email = "khushalnagal@gmail.com"
-    app_password = "vnjqbfjfyxcozdje"  # ✅ Your 16-char Gmail App Password (no spaces)
+    app_password = "vnjqbfjfyxcozdje"
 
     msg = MIMEText(body)
     msg["Subject"] = subject
@@ -65,14 +70,6 @@ def send_email_alert(subject, body, to_email="khushalnagal@gmail.com"):
     try:
         server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
         server.login(from_email, app_password)
-        server.send_message(msg)
-        server.quit()
-        print("[EMAIL] Alert email sent ✅")
-    except Exception as e:
-        print(f"[EMAIL] Failed to send email ❌ → {e}")
-    try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(FROM_EMAIL, APP_PASSWORD)
         server.send_message(msg)
         server.quit()
         print("[EMAIL] Alert email sent ✅")
@@ -129,5 +126,5 @@ if violated_labels:
 
     play_alert_sound()
     speak_alert(alert_text)
-    send_whatsapp_alert("🚨 abhi to sirf warning de rha hun aage se gaali padegi, " + alert_text)
+    send_whatsapp_alert("🚨 PPE Violation Alert, " + alert_text)
     send_email_alert("🚨 PPE Violation Alert", alert_text)
